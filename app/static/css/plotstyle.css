@@ -2,6 +2,8 @@ body {
   min-width: 310px;
   height: 400px;
   margin: 0 auto;
+  font-family: -apple-system, BlinkMacSystemFont, "San Francisco", Helvetica, Arial, sans-serif;
+
 }
 
 h2 {
@@ -21,7 +23,71 @@ h2 {
 
 .container {
   padding: 10px;
+  height: 30rem;
+  margin-bottom: 30px;
 }
+
+.ctrl-container{
+  height: 35rem;
+  width: 70rem;
+  background-color: #dedede;
+  margin: 0 auto;
+}
+
+.ctrl-btn{
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-left: 20px;
+  margin-top: -40px;
+}
+
+.ctrl-form{
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  width: 100px;
+  margin-top: 5%;
+  margin-left: 80px;
+}
+
+.ctrl-value{
+  background-color: #7A7A7A;
+  padding: 10px;
+  border-radius: 4px;
+  color: white;
+  margin-left: 62px;
+}
+
+.ctrl-form-btn{
+  background: white;
+  /* background-position: 0px -401px; */
+  border: solid 1px #e3b04b;
+  color: #e3b04b;
+  height: 30px;
+  padding-bottom: 2px;
+  border-radius: 7px;
+  padding: 20px;
+  width: 120px;
+  cursor: pointer; 
+  line-height: 40%;  
+}
+
+.btn-input{
+  border-radius: 7px;
+  border: solid 1px #7A7A7A;
+  height: 40px;
+  width: 100px;
+}
+
+.ctrl{
+  display: flex;
+  margin-left: 320px;
+  line-height: 20%;
+  gap: -10px;
+  align-items: center;
+}
+
 
 .header{
   display: flex;
@@ -152,93 +218,4 @@ h2 {
   background: #880e0e;
   background-position: 0px -501px;
   color: white;
-}
-
-/* The switch - the box around the slider */
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 60px;
-  height: 34px;
-}
-
-/* Hide default HTML checkbox */
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-/* The slider */
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #ccc;
-  -webkit-transition: 0.4s;
-  transition: 0.4s;
-}
-
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 26px;
-  width: 26px;
-  left: 4px;
-  bottom: 4px;
-  background-color: white;
-  -webkit-transition: 0.4s;
-  transition: 0.4s;
-}
-
-input:checked + .slider {
-  background-color: #2196f3;
-}
-
-input:focus + .slider {
-  box-shadow: 0 0 1px #2196f3;
-}
-
-input:checked + .slider:before {
-  -webkit-transform: translateX(26px);
-  -ms-transform: translateX(26px);
-  transform: translateX(26px);
-}
-
-/* Rounded sliders */
-.slider.round {
-  border-radius: 34px;
-}
-
-.slider.round:before {
-  border-radius: 50%;
-}
-
-#toast-container {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  z-index: 9999;
-}
-
-.toast {
-  position: relative;
-  min-width: 250px;
-  padding: 15px 20px;
-  background-color: #333;
-  color: #fff;
-  border-radius: 4px;
-  opacity: 0;
-  transition: opacity 0.3s ease-in-out;
-}
-
-.toast.fade-in {
-  opacity: 1;
-}
-
-.toast.fade-out {
-  opacity: 0;
 }

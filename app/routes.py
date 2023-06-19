@@ -1,6 +1,6 @@
 from app import app 
 from flask import session, make_response, redirect, render_template, request, flash, url_for, Response
-from app.models import checklogin, update_sms_state, get_sms_state, delete_poll_data, insert_pollution_data, get_pollution_data, get_poll_state, update_poll_state
+from app.models import checklogin, update_sms_state, get_sms_state, delete_poll_data, insert_pollution_data, get_pollution_data, get_poll_state, update_poll_state, get_pollution_input, insert_pollution_input
 import json, random
 
 API = 'xdol'
@@ -31,7 +31,7 @@ def plot():
     #create a session to secure this endpoint
     if "username" not in session:
         return redirect(url_for('login'))
-    #data = get_transformer_data()
+    #data = get_pollution_data()
     return render_template('plot.html', name=session["username"])
 
 
@@ -43,6 +43,26 @@ def update(api_key, c1, c2, c3, c4, c5):
         return Response(status=200)
     else:
         return Response(status=500)
+    
+
+@app.route('/insert/<int:b1>/<int:b2>/<int:b3>/<int:b4>/<int:b5>', methods=['GET','POST'])
+def insert_input(b1, b2, b3, b4, b5):
+    insert_pollution_input(b1, b2, b3, b4, b5)
+    return Response(status=200)  
+
+@app.route('/get_pollution_input', methods = ['GET'])
+def get_all_input():
+    data = get_pollution_input('all')
+    data = str(data)
+    data = data.strip('[]()')
+    return str(data)
+
+@app.route('/get_pollution_input/<id>', methods = ['GET'])
+def get_input(id):
+    pollution_input = get_pollution_input(id)
+    pollution_input = str(pollution_input)
+    pollution_input = pollution_input.strip('[]()')
+    return str(pollution_input)
 
 #fetch data to be plotted
 @app.route('/data', methods=['GET', 'POST'])

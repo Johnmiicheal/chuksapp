@@ -15,6 +15,34 @@ def checklogin(username, password):
     con.close()
     return success
 
+def insert_pollution_input(c1, c2, c3, c4, c5):
+    c1 = f"{c1}"
+    c2 = f"{c2}"
+    c3 = f"{c3}"
+    c4 = f"{c4}"
+    c5 = f"{c5}"
+    con = sql.connect("chuks.db")
+    cur = con.cursor()
+    query = f"UPDATE ranges SET c1 = {c1}, c2 = {c2}, c3 = {c3}, c4 = {c4}, c5 = {c5} WHERE id = 1"
+    cur.execute(query)
+    con.commit()
+    con.close()
+
+def get_pollution_input(id):
+    id = f"{id}"
+    con = sql.connect("chuks.db")
+    cur = con.cursor()
+
+    if id == 'all':
+        query = f"SELECT c1, c2, c3, c4, c5 FROM ranges WHERE id = 1"
+    else:
+        query = f"SELECT {id} FROM ranges WHERE id = 1"
+    cur.execute(query)
+    control_input = cur.fetchall()
+    con.commit()
+    con.close()
+    return control_input
+
 def insert_pollution_data(c1, c2, c3, c4, c5):
     con = sql.connect("chuks.db")
     cur = con.cursor()

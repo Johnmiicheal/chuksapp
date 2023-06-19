@@ -19,36 +19,39 @@
     <script src="https://code.highcharts.com/modules/accessibility.js"></script>
   </head>
   <body>
-    {% with messages = get_flashed_messages() %}
-    {% if messages %}
-      <ul>
-        {% for message in messages %}
-        <div class="alert_green">
-          <!-- <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> -->
-          {{ message }}
-        </div>
-        <script>
-          // Fade out the alert box after 3 seconds
-          setTimeout(function() {
-            var alertBox = document.querySelector('.alert_green');
-            alertBox.style.opacity = '0';
-            alertBox.style.transition = 'opacity 1s ease-in-out';
-            setTimeout(function() {
-              alertBox.remove();
-            }, 1000);
-          }, 800);
-        </script>
-        {% endfor %}
-      </ul>
-    {% endif %}
-  {% endwith %}
+    {% with messages = get_flashed_messages() %} {% if messages %}
+    <ul>
+      {% for message in messages %}
+      <div class="alert_green">
+        <!-- <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> -->
+        {{ message }}
+      </div>
+      <script>
+        // Fade out the alert box after 3 seconds
+        setTimeout(function () {
+          var alertBox = document.querySelector(".alert_green");
+          alertBox.style.opacity = "0";
+          alertBox.style.transition = "opacity 1s ease-in-out";
+          setTimeout(function () {
+            alertBox.remove();
+          }, 1000);
+        }, 800);
+      </script>
+      {% endfor %}
+    </ul>
+    {% endif %} {% endwith %}
     <header class="header">
       <p class="logo">CHUKS.N - SMART POLLUTANT DASHBOARD</p>
 
-      <span style="display: flex; margin-right:35px;">
+      <span style="display: flex; margin-right: 35px">
         <!--DELETE ALL DATA-->
         <form action="/delete" method="post">
-          <input type="submit" class="buttonstyle" onclick="handleDelete()" value="CLEAR ALL DATA" />
+          <input
+            type="submit"
+            class="buttonstyle"
+            onclick="handleDelete()"
+            value="CLEAR ALL DATA"
+          />
         </form>
         <!-- LOGOUT -->
         <form action="/logout" method="post">
@@ -56,12 +59,90 @@
         </form>
       </span>
     </header>
-    
+
     <!--HIGH CHART -->
     <div class="jumbotron"></div>
     <br />
     <br />
-    <div class="container-fluid">
+
+      <div class="ctrl-container">
+        <h2 class="ctrl-header">Control Panel</h2>
+        <div style="display: flex; flex-direction: row; align-items: center">
+          <div class="ctrl-btn">
+            <div style="display: flex; margin-left: 50%; gap: 100px;">
+              <p style="margin-left: 230px;">Value</p>
+              <p style="margin-left: 5px;">Set Range</p>
+            </div>
+            <div class="ctrl">
+              <p style="width: 130px">Channel 1</p>
+              <p class="ctrl-value" id="ctrl-value-1"></p>
+            </div>
+
+            <div class="ctrl">
+              <p style="width: 130px; line-height: 1.2em">Channel 2</p>
+              <p class="ctrl-value" id="ctrl-value-2"></p>
+            </div>
+
+            <div class="ctrl">
+              <p style="width: 130px; line-height: 1.2em">Channel 3</p>
+              <p class="ctrl-value" id="ctrl-value-3"></p>
+            </div>
+
+            <div class="ctrl">
+              <p style="width: 130px; line-height: 1.2em">Channel 4</p>
+              <p class="ctrl-value" id="ctrl-value-4"></p>
+            </div>
+            <div class="ctrl">
+              <p style="width: 130px; line-height: 1.2em">Channel 5</p>
+              <p class="ctrl-value" id="ctrl-value-5"></p>
+            </div>
+          </div>
+
+          <div class="ctrl-form">
+            <input
+              type="number"
+              name="form-c1"
+              id="form-c1"
+              class="btn-input"
+            />
+            <input
+              type="number"
+              name="form-c2"
+              id="form-c2"
+              class="btn-input"
+            />
+
+            <div style="display: flex; align-items: center">
+              <input
+                type="number"
+                name="form-c3"
+                id="form-c3"
+                class="btn-input"
+              />
+              <button
+                style="margin-left: 20px"
+                class="ctrl-form-btn"
+                onclick="updateInput()"
+              >
+                Submit
+              </button>
+            </div>
+            <input
+              type="number"
+              name="form-c4"
+              id="form-c4"
+              class="btn-input"
+            />
+            <input
+              type="number"
+              name="form-c5"
+              id="form-c5"
+              class="btn-input"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="container-fluid">
       {% for i in range(1, 6) %}
       <div class="container">
         <div id="c{{ i }}"></div>
@@ -71,20 +152,187 @@
   </body>
 
   <script>
+    function handleDelete() {
+      localStorage.clear();
+    }
 
-function handleDelete(){
-    localStorage.clear();
-  }
+    for (let i = 1; i <= 5; i++) {
+      fetch(`/get_pollution_input/c${i}`)
+        .then((response) => response.text())
+        .then((data) => {
+          console.log("Value: ", data);
+          const value = document.getElementById(`ctrl-value-${i}`);
+          value.textContent = parseInt(data);
+        })
+        .catch((error) => {
+          console.error("Error fetching value: ", error);
+        });
+    }
+
+    function updateInput() {
+      let b1 = document.getElementById("form-c1").value;
+      let b2 = document.getElementById("form-c2").value;
+      let b3 = document.getElementById("form-c3").value;
+      let b4 = document.getElementById("form-c4").value;
+      let b5 = document.getElementById("form-c5").value;
+      if (b1 && b2 && b3 && b4) {
+        fetch(`/insert/${b1}/${b2}/${b3}/${b4}/${b5}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+        }).then(() => {
+          const value1 = document.getElementById(`ctrl-value-1`);
+          value1.textContent = parseInt(b1);
+
+          const value2 = document.getElementById(`ctrl-value-2`);
+          value2.textContent = parseInt(b2);
+
+          const value3 = document.getElementById(`ctrl-value-3`);
+          value3.textContent = parseInt(b3);
+
+          const value4 = document.getElementById(`ctrl-value-4`);
+          value4.textContent = parseInt(b4);
+
+          const value5 = document.getElementById(`ctrl-value-5`);
+          value5.textContent = parseInt(b5);
+          window.location.reload();
+        });
+      } else {
+        alert("Please fill all control inputs");
+      }
+    }
+    let tempSent = false;
+    let shortOne = false;
+    let voltageSent = false;
+    let shortTwo = false;
+    let lineSent = false;
+    let shortThree = false;
+    let neutralSent = false;
+    let shortFour = false;
+    let neuSent = false;
+    let shortFive = false;
+    
+    setInterval(() => {
+      // Create your own SMTPJS Account and insert the details here
+      // Also sort out the logic, if you want channel input to be lesser than DB reading.
+      fetch("/get_pollution_input")
+        .then((response) => response.text())
+        .then((pollution) => {
+          fetch("/data")
+            .then((response) => response.text())
+            .then((data) => {
+              data = data.split(", ");
+              pollution = pollution.split(", ");
+              console.log("pollution: ", pollution);
+              console.log("Data: ", data);
+
+              //CHANNEL 1
+              //Overload
+              if (data[1] > pollution[0] && !tempSent) {
+                console.log(`${pollution[0]} is less than ${data[1]}`);
+                alert("URGENT: Overload Detected(Channel 1)");
+                tempSent = true;
+              } else if (data[1] <= pollution[0]) {
+                tempSent = false;
+              }
+
+              //Short Circuit
+              if (data[1] > 24 && !shortOne) {
+                //set constant value for short circuit here
+                console.log(`${pollution[0]} is less than ${data[1]}`);
+                alert("URGENT: Short Circuit Fault Detected on pollution Line(Channel 1)");
+                shortOne = true;
+              } else if (data[1] <= pollution[0]) {
+                shortOne = false;
+              }
+
+              // CHANNEL 2
+              //Overloading Fault
+              if (data[2] > pollution[1] && !lineSent) {
+                console.log(`${pollution[1]} is less than ${data[2]}`);
+                alert("URGENT: pollution Line Overload Detected(Channel 2)");
+                lineSent = true;
+              } else if (data[2] <= pollution[1]) {
+                lineSent = false;
+              }
+
+              //Short Circuit
+              if (data[2] > pollution[1] && !shortTwo) {
+                console.log(`${pollution[1]} is less than ${data[2]}`);
+                alert("Channel 2 URGENT: Short Circuit Fault Detected on pollution Line");
+                shortTwo = true;
+              } else if (data[2] <= pollution[1]) {
+                shortTwo = false;
+              }
+
+              //CHANNEL 3
+              // Overloading Fault
+              if (data[3] > pollution[2] && !voltageSent) {
+                console.log(`${pollution[2]} is less than ${data[3]}`);
+                alert("URGENT: pollution Line Overload Detected(Channel 3)");
+                voltageSent = true;
+              } else if (data[3] <= pollution[2]) {
+                voltageSent = false;
+              }
+
+              // Short Circuit
+              if (data[3] > pollution[2] && !shortThree) {
+                console.log(`${pollution[2]} is less than ${data[3]}`);
+                alert("Channel 3 URGENT: Short Circuit Fault Detected on pollution Line");
+                shortThree = true;
+              } else if (data[3] <= pollution[2]) {
+                shortThree = false;
+              }
+
+              //CHANNEL 4
+              //Overloading Fault
+              if (data[4] > pollution[3] && !neutralSent) {
+                console.log(`${pollution[3]} is less than ${data[4]}`);
+                alert("URGENT: pollution Line Overload Detected(Channel 4)");
+                neutralSent = true;
+              } else if (data[4] <= pollution[3]) {
+                neutralSent = false;
+              }
+
+              //Short Circuit
+              if (data[4] > pollution[3] && !shortFour) {
+                console.log(`${pollution[3]} is less than ${data[4]}`);
+                alert("Channel 4 URGENT: Short Circuit Fault Detected on pollution Line");
+                shortFour = true;
+              } else if (data[4] <= pollution[3]) {
+                shortFour = false;
+              }
+
+              //CHANNEL 5
+              //Overloading Fault
+              if (data[5] > pollution[4] && !neuSent) {
+                console.log(`${pollution[4]} is less than ${data[4]}`);
+                alert("URGENT: pollution Line Overload Detected(Channel 5)");
+                neuSent = true;
+              } else if (data[5] <= pollution[4]) {
+                neuSent = false;
+              }
+
+              //Short Circuit
+              if (data[5] > pollution[4] && !shortFive) {
+                console.log(`${pollution[4]} is less than ${data[5]}`);
+                alert("Channel 5 URGENT: Short Circuit Fault Detected on pollution Line");
+                shortFive = true;
+              } else if (data[5] <= pollution[4]) {
+                shortFive = false;
+              }
+            });
+        });
+    }, 1000); // Every 0.9 Seconds
 
 
     //Create Chart
     function createChart(id, titleText, yAxisTitleText, dataPointIndex, col) {
       let chartData = localStorage.getItem(`chartData-${id}`);
-  if (chartData) {
-    chartData = JSON.parse(chartData);
-  } else {
-    chartData = [];
-  }
+      if (chartData) {
+        chartData = JSON.parse(chartData);
+      } else {
+        chartData = [];
+      }
       const chart = new Highcharts.Chart({
         chart: { renderTo: id },
         title: { text: titleText },
@@ -134,7 +382,7 @@ function handleDelete(){
     const c1 = createChart(
       "c1",
       "Channel 1",
-      "Temperature",
+      "Temperature (degrees)",
       1, //because id takes position zero
       "#f2ad0c"
     );
@@ -143,35 +391,40 @@ function handleDelete(){
 
     const c3 = createChart("c3", "Channel 3", "Dust", 3, "#e0103d");
 
-    const c4 = createChart("c4", "Channel 4", "Carbon (IV) Oxide", 4, "#3610e0");
+    const c4 = createChart(
+      "c4",
+      "Channel 4",
+      "Carbon (IV) Oxide",
+      4,
+      "#3610e0"
+    );
 
     const c5 = createChart("c5", "Channel 5", "Methane", 5, "#faa2a2");
 
-
     function showToast(message) {
-  // Create the toast element
-  var toast = document.createElement("div");
-  toast.classList.add("toast");
-  toast.innerText = message;
+      // Create the toast element
+      var toast = document.createElement("div");
+      toast.classList.add("toast");
+      toast.innerText = message;
 
-  // Add the toast to the container
-  var container = document.getElementById("toast-container");
-  container.appendChild(toast);
+      // Add the toast to the container
+      var container = document.getElementById("toast-container");
+      container.appendChild(toast);
 
-  // Show the toast
-  setTimeout(function() {
-    toast.classList.add("fade-in");
-  }, 100);
+      // Show the toast
+      setTimeout(function () {
+        toast.classList.add("fade-in");
+      }, 100);
 
-  // Hide the toast
-  setTimeout(function() {
-    toast.classList.add("fade-out");
-  }, 3000);
+      // Hide the toast
+      setTimeout(function () {
+        toast.classList.add("fade-out");
+      }, 3000);
 
-  // Remove the toast from the container
-  setTimeout(function() {
-    container.removeChild(toast);
-  }, 3300);
-}
+      // Remove the toast from the container
+      setTimeout(function () {
+        container.removeChild(toast);
+      }, 3300);
+    }
   </script>
 </html>
